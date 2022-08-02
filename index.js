@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { json } = require('express');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -19,13 +20,35 @@ const run = async() => {
 
         app.post('/blog', async(req, res) => {
             const blog = req.body;
-            console.log(blog)
             const result = await toDoCollection.insertOne(blog);
             res.send(result);
         });
         app.get('/blog', async(req, res) => {
             const query = {};
             const result = await toDoCollection.find(query).toArray();
+            res.send(result);
+        });
+        app.get('/update/:id', async(req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const filter = {_id: ObjectId(id)};
+            const result = await toDoCollection.findOne(filter);
+            res.send(result);
+        })
+        app.delete('/blog/:id', async(req, res)=>{
+            const id = req.params.id;
+            const filter = {_id: ObjectId(id)};
+            const result = await toDoCollection.deleteOne(filter);
+            res.send(result);
+        });
+        app.patch('/update/:id', async(req, res) => {
+            const id = req.params.id;
+            const blog = req.body;
+            const filter = {_id: ObjectId(id)};
+            const updateDoc = {
+                $set: blog,
+            };
+            const result = await toDoCollection.updateOne(filter, updateDoc);
             res.send(result);
         })
 
