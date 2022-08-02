@@ -51,6 +51,17 @@ const run = async() => {
             const result = await toDoCollection.updateOne(filter, updateDoc);
             res.send(result);
         })
+        app.patch('/comment/:id', async(req, res) => {
+            const id = req.params.id;
+            const comments = req.body;
+            console.log(id, comments)
+            const filter = {_id: ObjectId(id)};
+            const updateDoc = {
+                $set: comments,
+            };
+            const result = await toDoCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
 
     }
     finally{
